@@ -20,7 +20,7 @@ module Import
 
     def yaml_output
       output = %Q{#{locale}:
-  countries:
+  localized_countries:
 #{countries_yaml_content}
 }
     end
@@ -29,7 +29,7 @@ module Import
       output = <<HASH
 { 
 :#{locale} => {
-  :countries => {
+  :localized_countries => {
     #{countries_hash_content}      
   }
 }

@@ -17,6 +17,7 @@ pkg/*.gem
 
 # custom
 sandbox 
+.rvmrc
 
 Gemfile.lock
 

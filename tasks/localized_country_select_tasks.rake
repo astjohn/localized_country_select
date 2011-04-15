@@ -66,7 +66,7 @@ namespace :import do
     output =<<HEAD
 { :#{lang} => {
 
-    :countries => {
+    :localized_countries => {
 HEAD
     countries.each do |country|
       output << "\t\t\t:#{country[:code]} => \"#{country[:name]}\",\n"

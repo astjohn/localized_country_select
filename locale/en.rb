@@ -1,6 +1,6 @@
 { :en => {
 
-    :countries => {
+    :localized_countries => {
 			:AD => "Andorra",
 			:AE => "United Arab Emirates",
 			:AF => "Afghanistan",

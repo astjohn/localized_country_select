@@ -64,7 +64,7 @@ module LocalizedCountrySelect
         # ----- Write the parsed values into file   ---------------------------------
         puts "\n... writing the output"
 
-        filename = File.join(Rails.root, 'config', 'locales', "countries.#{locale}.#{file_ext}")
+        filename = File.join(Rails.root, 'config', 'locales', "localized_countries.#{locale}.#{file_ext}")
         filename += '.NEW' if File.exists?(filename) # Append 'NEW' if file exists
         File.open(filename, 'w+') { |f| f << get_output }
 

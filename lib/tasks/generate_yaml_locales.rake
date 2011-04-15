@@ -65,7 +65,7 @@ namespace :yaml_locales do
     # ----- Prepare the output format     ------------------------------------------
     output =<<HEAD
 #{lang}:
-    countries:
+    localized_countries:
 HEAD
     countries.each do |country|
       output << "\t\t\t#{country[:code]}: \"#{country[:name]}\"\n"
@@ -76,7 +76,7 @@ TAIL
 
     # ----- Write the parsed values into file      ---------------------------------
     puts "\n... writing the output"
-    filename = File.join(File.dirname(__FILE__), '..', 'locale', "countries.#{lang}.yaml")
+    filename = File.join(File.dirname(__FILE__), '..', 'locale', "localized_countries.#{lang}.yaml")
     filename += '.NEW' if File.exists?(filename) # Append 'NEW' if file exists
     File.open(filename, 'w+') { |f| f << output }
     puts "\n---\nWritten values for the '#{lang}' into file: #{filename}\n"

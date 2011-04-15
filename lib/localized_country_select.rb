@@ -24,7 +24,7 @@ module LocalizedCountrySelect
     # for <tt><option></tt> tags
     def localized_countries_array options = {}
       res = []
-      list = I18n.translate(:countries).each do |key, value| 
+      list = I18n.translate(:localized_countries).each do |key, value| 
         res << [value, key.to_s.upcase] if include_country?(key.to_s, options)
       end
       res.sort_by { |country| country.first.parameterize }
@@ -34,7 +34,7 @@ module LocalizedCountrySelect
       if options[:only] 
         return options[:only].include?(key)
       end      
-      if options[:except] 
+      if options[:except]
         return !options[:except].include?(key)
       end
       true      
@@ -45,7 +45,7 @@ module LocalizedCountrySelect
     #   priority_countries_array([:TW, :CN])
     #   # => [ ['Taiwan', 'TW'], ['China', 'CN'] ]
     def priority_countries_array(country_codes=[])
-      countries = I18n.translate(:countries)
+      countries = I18n.translate(:localized_countries)
       country_codes.map { |code| [countries[code.to_s.upcase.to_sym], code.to_s.upcase] }
     end
   end
