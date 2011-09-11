@@ -3,15 +3,15 @@ require 'open-uri'
 
 # Rake task for importing country names from Unicode.org's CLDR repository
 # (http://www.unicode.org/cldr/data/charts/summary/root.html).
-# 
-# It parses a HTML file from Unicode.org for given locale and saves the 
+#
+# It parses a HTML file from Unicode.org for given locale and saves the
 # Rails' I18n hash in the plugin +locale+ directory
-# 
+#
 # Don't forget to restart the application when you add new locale to load it into Rails!
-# 
+#
 # == Example
 #   rake import:country_select 'de'
-# 
+#
 # The code is deliberately procedural and simple, so it's easily
 # understandable by beginners as an introduction to Rake tasks power.
 # See http://github.com/joshmh/cldr/tree/master/converter.rb for much more robust solution
@@ -69,7 +69,7 @@ namespace :import do
     :localized_countries => {
 HEAD
     countries.each do |country|
-      output << "\t\t\t:#{country[:code]} => \"#{country[:name]}\",\n"
+      output << "\t\t\t:\"#{country[:code]}\" => \"#{country[:name]}\",\n"
     end
     output <<<<TAIL
     }
@@ -89,3 +89,4 @@ TAIL
   end
 
 end
+

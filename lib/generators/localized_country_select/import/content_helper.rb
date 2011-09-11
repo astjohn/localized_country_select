@@ -2,14 +2,14 @@ module Import
   module ContentHelper
     def countries_yaml_content
       countries.inject([]) do |output, country|
-        output << "    #{country[:code]}: \"#{country[:name]}\""
+        output << "    \"#{country[:code]}\": \"#{country[:name]}\""
         output
       end.join("\n")
     end
 
     def countries_hash_content
       countries.inject([]) do |output, country|
-        output << "    :#{country[:code]} => \"#{country[:name]}\","
+        output << "    :\"#{country[:code]}\" => \"#{country[:name]}\","
         output
       end.join("\n")
     end
@@ -27,10 +27,10 @@ module Import
 
     def rb_output
       output = <<HASH
-{ 
+{
 :#{locale} => {
   :localized_countries => {
-    #{countries_hash_content}      
+    #{countries_hash_content}
   }
 }
 }
@@ -39,3 +39,4 @@ HASH
     alias_method :yml_output, :yaml_output
   end
 end
+
