@@ -1,10 +1,10 @@
-$KCODE = 'u'
+# encoding: utf-8
 require 'test/unit'
 
 require 'rubygems'
 require 'active_support'
-require 'action_controller'
-require 'action_controller/test_case'
+require 'action_dispatch'
+require 'action_dispatch/testing/test_process'
 require 'action_view'
 require 'action_view/helpers'
 require 'action_view/helpers/tag_helper'
@@ -25,12 +25,12 @@ class LocalizedCountrySelectTest < Test::Unit::TestCase
   include ActionView::Helpers::FormTagHelper
 
   def test_action_view_should_include_helper_for_object
-    assert ActionView::Helpers::FormBuilder.instance_methods.include?('localized_country_select')
-    assert ActionView::Helpers::FormOptionsHelper.instance_methods.include?('localized_country_select')
+    assert ActionView::Helpers::FormBuilder.instance_methods.member?(:localized_country_select)
+    assert ActionView::Helpers::FormOptionsHelper.instance_methods.include?(:localized_country_select)
   end
 
   def test_action_view_should_include_helper_tag
-    assert ActionView::Helpers::FormOptionsHelper.instance_methods.include?('localized_country_select_tag')
+    assert ActionView::Helpers::FormOptionsHelper.instance_methods.include?(:localized_country_select_tag)
   end
 
   def test_should_return_select_tag_with_proper_name_for_object
@@ -81,16 +81,16 @@ class LocalizedCountrySelectTest < Test::Unit::TestCase
 
   def test_include_country_rejects_on_except_option
     res = !LocalizedCountrySelect::include_country?('AF', except: ['AF'])
-    puts "should not include_country? 'AF' except AF : #{res}"    
+    puts "should not include_country? 'AF' except AF : #{res}"
   end
 
   def test_include_country_accept_on_only_option
     res = LocalizedCountrySelect::include_country?('AF', only: ['AF'])
-    puts "should include_country? 'AF' : #{res}"    
+    puts "should include_country? 'AF' : #{res}"
 
     res = !LocalizedCountrySelect::include_country?('AD', only: ['AF'])
-    puts "should not include_country? 'AD' : #{res}"    
-  end  
+    puts "should not include_country? 'AD' : #{res}"
+  end
 
   def test_localized_countries_array_rejects_on_except_option
     list = LocalizedCountrySelect::localized_countries_array(:except => ['AF'])

@@ -19,8 +19,7 @@ require 'open-uri'
 namespace :import do
 
   desc "Import country codes and names for various languages from the Unicode.org CLDR archive. Depends on Hpricot gem."
-  lang = ARGV.empty? ? 'lang' : ARGV[0].split(':').last
-  task "country_select:#{lang}".to_sym do
+  task :country_select do
     begin
       require 'hpricot'
     rescue LoadError
@@ -28,20 +27,19 @@ namespace :import do
       exit
     end
 
-    # TODO : Implement locale import chooser from CLDR root via Highline
-
-    # Check lang variable
-    if lang == 'lang' || (/\A[a-z]{2}\z/).match(lang) == nil
-      puts "\n[!] Usage: rake import:country_select:lang (Replace lang variable with language code you need.)\n\n"
+    # Setup variables
+    locale = ENV['LOCALE']
+    unless locale
+      puts "\n[!] Usage: rake import:country_select LOCALE=de\n\n"
       exit 0
     end
 
     # ----- Get the CLDR HTML     --------------------------------------------------
     begin
-      puts "... getting the HTML file for locale '#{lang}'"
-      doc = Hpricot( open("http://www.unicode.org/cldr/data/charts/summary/#{lang}.html") )
+      puts "... getting the HTML file for locale '#{locale}'"
+      doc = Hpricot( open("http://www.unicode.org/cldr/data/charts/summary/#{locale}.html") )
     rescue => e
-      puts "[!] Invalid locale name '#{lang}'! Not found in CLDR (#{e})"
+      puts "[!] Invalid locale name '#{locale}'! Not found in CLDR (#{e})"
       exit 0
     end
 
@@ -63,13 +61,14 @@ namespace :import do
 
 
     # ----- Prepare the output format     ------------------------------------------
-    output =<<HEAD
-{ :#{lang} => {
+    output = "#encoding: UTF-8\n"
+    output <<<<HEAD
+{ :#{locale} => {
 
     :localized_countries => {
 HEAD
     countries.each do |country|
-      output << "\t\t\t:\"#{country[:code]}\" => \"#{country[:name]}\",\n"
+      output << "\t\t\t:\"#{country[:code]}\" => \"#{country[:name].force_encoding('UTF-8')}\",\n"
     end
     output <<<<TAIL
     }
@@ -81,12 +80,13 @@ TAIL
 
     # ----- Write the parsed values into file      ---------------------------------
     puts "\n... writing the output"
-    filename = File.join(File.dirname(__FILE__), '..', 'locale', "#{lang}.rb")
-    filename += '.NEW' if File.exists?(filename) # Append 'NEW' if file exists
-    File.open(filename, 'w+') { |f| f << output }
-    puts "\n---\nWritten values for the '#{lang}' into file: #{filename}\n"
+    filename = Rails.root.join('config', 'locales', "country_select_#{locale.downcase}.rb")
+    if filename.exist?
+      filename = Pathname.new("#{filename.to_s}.NEW")
+    end
+    File.open(filename, 'w') { |f| f.write output }
+    puts "\n---\nWritten values for the '#{locale}' into file: #{filename}\n"
     # ------------------------------------------------------------------------------
   end
 
 end
-

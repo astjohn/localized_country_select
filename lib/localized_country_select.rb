@@ -18,16 +18,19 @@
 # Code adapted from Rails' default +country_select+ plugin (previously in core)
 # See http://github.com/rails/country_select/tree/master/lib/country_select.rb
 #
+
 module LocalizedCountrySelect
   class << self
     # Returns array with codes and localized country names (according to <tt>I18n.locale</tt>)
     # for <tt><option></tt> tags
-    def localized_countries_array options = {}
-      res = []
-      list = I18n.translate(:localized_countries).each do |key, value|
-        res << [value, key.to_s.upcase] if include_country?(key.to_s, options)
+    def localized_countries_array(options={})
+      if(options[:description]==:abbreviated)
+        I18n.translate(:localized_countries).map { |key, value| [key.to_s.upcase] }.
+          sort_by { |country| country.first.parameterize }
+      else
+        I18n.translate(:localized_countries).map { |key, value| [value, key.to_s.upcase] }.
+          sort_by { |country| country.first.parameterize }
       end
-      res.sort_by { |country| country.first.parameterize }
     end
 
     def include_country?(key, options)
@@ -44,9 +47,13 @@ module LocalizedCountrySelect
     # == Example
     #   priority_countries_array([:TW, :CN])
     #   # => [ ['Taiwan', 'TW'], ['China', 'CN'] ]
-    def priority_countries_array(country_codes=[])
-      countries = I18n.translate(:localized_countries)
-      country_codes.map { |code| [countries[code.to_s.upcase.to_sym], code.to_s.upcase] }
+    def priority_countries_array(country_codes=[],options={})
+      if(options[:description]==:abbreviated)
+        country_codes.map { |code| [code.to_s.upcase] }
+      else
+        countries = I18n.translate(:localized_countries)
+        country_codes.map { |code| [countries[code.to_s.upcase.to_sym], code.to_s.upcase] }
+      end
     end
   end
 end
@@ -71,19 +78,19 @@ module ActionView
       # It behaves likes older object-binded brother +localized_country_select+ otherwise
       # TODO : Implement pseudo-named args with a hash, not the "somebody said PHP?" multiple args sillines
       def localized_country_select_tag(name, selected_value = nil, priority_countries = nil, html_options = {})
-        select_tag name.to_sym, localized_country_options_for_select(selected_value, priority_countries), html_options.stringify_keys
+        select_tag name.to_sym, localized_country_options_for_select(selected_value, priority_countries).html_safe, html_options.stringify_keys
       end
       alias_method :country_select_tag, :localized_country_select_tag
 
       # Returns a string of option tags for countries according to locale. Supply the country code in upper-case ('US', 'DE')
       # as +selected+ to have it marked as the selected option tag.
       # Country codes listed as an array of symbols in +priority_countries+ argument will be listed first
-      def localized_country_options_for_select(selected = nil, priority_countries = nil, options = {})
-        country_options = ""
+      def localized_country_options_for_select(selected = nil, priority_countries = nil, options={})
+        country_options = "".html_safe
         if priority_countries
-          country_options += options_for_select(LocalizedCountrySelect::priority_countries_array(priority_countries), selected)
-          country_options += "<option value=\"\" disabled=\"disabled\">-------------</option>\n"
-          return country_options + options_for_select(LocalizedCountrySelect::localized_countries_array(options) - LocalizedCountrySelect::priority_countries_array(priority_countries), selected)
+          country_options += options_for_select(LocalizedCountrySelect::priority_countries_array(priority_countries, options), selected)
+          country_options += "<option value=\"\" disabled=\"disabled\">-------------</option>\n".html_safe
+          return country_options + options_for_select(LocalizedCountrySelect::localized_countries_array(options) - LocalizedCountrySelect::priority_countries_array(priority_countries, options), selected)
         else
           return country_options + options_for_select(LocalizedCountrySelect::localized_countries_array(options), selected)
         end
@@ -115,3 +122,8 @@ module ActionView
 
   end
 end
+
+if defined?(Rails)
+  require "localized_country_select/railtie"
+end
+

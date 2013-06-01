@@ -8,20 +8,10 @@ rescue Bundler::BundlerError => e
   exit e.status_code
 end
 require 'rake'
+require 'rake/testtask'
+require 'rake/task'
 
-require 'jeweler'
-Jeweler::Tasks.new do |gem|
-  # gem is a Gem::Specification... see http://docs.rubygems.org/read/chapter/20 for more options
-  gem.name = "localized_country_select"
-  gem.homepage = "http://github.com/kristianmandrup/localized_country_select"
-  gem.license = "MIT"
-  gem.summary = %Q{Localized country select for Rails 2.3+}
-  gem.description = %Q{Localized country select for Rails 2.3+ with options to control countrys to display}
-  gem.email = "kmandrup@gmail.com"
-  gem.authors = ["Kristian Mandrup"]
-  # Include your dependencies below. Runtime dependencies are required when using your gem,
-  # and development dependencies are only needed for development (ie running rake tasks, tests, etc)
-
+load File.join(File.dirname(__FILE__), 'lib', 'tasks', 'localized_country_select_tasks.rake')
   gem.add_runtime_dependency 'rails', '>= 2.3.5'
 end
 Jeweler::RubygemsDotOrgTasks.new
@@ -37,14 +27,11 @@ RSpec::Core::RakeTask.new(:rcov) do |spec|
   spec.rcov = true
 end
 
-task :default => :spec
-
-require 'rake/rdoctask'
-Rake::RDocTask.new do |rdoc|
-  version = File.exist?('VERSION') ? File.read('VERSION') : ""
-
-  rdoc.rdoc_dir = 'rdoc'
-  rdoc.title = "localized_country_select #{version}"
-  rdoc.rdoc_files.include('README*')
-  rdoc.rdoc_files.include('lib/**/*.rb')
-end
+#desc 'Generate documentation for the localized_country_select plugin.'
+#Rake::Task.new(:rdoc) do |rdoc|
+  #rdoc.rdoc_dir = 'rdoc'
+  #rdoc.title    = 'LocalizedCountrySelect'
+  #rdoc.options << '--line-numbers' << '--inline-source'
+  #rdoc.rdoc_files.include('README.rdoc')
+  #rdoc.rdoc_files.include('lib/**/*.rb')
+#end
